@@ -186,7 +186,7 @@ h5 {
     <div class="card-content">
       <div class="row row-group m-0">
         <!-- Total Orders -->
-        <a href="insert-report.html" class="col-12 col-lg-6 col-xl-3 border-light card-button" >
+        <a href="insert-report.php" class="col-12 col-lg-6 col-xl-3 border-light card-button" >
           <div class="card-body">
             <h5 class="text-white mb-0">
               new
@@ -206,7 +206,7 @@ h5 {
         </a>
   
         <!-- Total Revenue -->
-        <a href="insert-driver.html" class="col-12 col-lg-6 col-xl-3 border-light card-button">
+        <a href="insert-driver.php" class="col-12 col-lg-6 col-xl-3 border-light card-button">
           <div class="card-body">
             <h5 class="text-white mb-0">
               new
@@ -228,7 +228,7 @@ h5 {
         </a>
   
         <!-- Visitors -->
-        <a href="insert-garage.html" class="col-12 col-lg-6 col-xl-3 border-light card-button">
+        <a href="insert-garage.php" class="col-12 col-lg-6 col-xl-3 border-light card-button">
           <div class="card-body">
             <h5 class="text-white mb-0">
               new
@@ -250,7 +250,7 @@ h5 {
         </a>
   
         <!-- Customer Feedback -->
-        <a href="insert-expenses.html" class="col-12 col-lg-6 col-xl-3 border-light card-button">
+        <a href="insert-expenses.php" class="col-12 col-lg-6 col-xl-3 border-light card-button">
           <div class="card-body">
             <h5 class="text-white mb-0">
               new
@@ -465,7 +465,7 @@ h5 {
     <div class="card-content">
       <div class="row row-group m-0">
         <!-- Total Orders -->
-        <a href="calendar.html" class="col-12 col-lg-6 col-xl-3 border-light card-button">
+        <a href="calendar.php" class="col-12 col-lg-6 col-xl-3 border-light card-button">
           <div class="card-body">
             <h5 class="text-white mb-0">
               calendar 

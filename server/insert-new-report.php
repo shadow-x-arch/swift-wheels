@@ -31,18 +31,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($decodedResponse['error'])) {
             // Redirect with an error message
             $message = urlencode("Error: " . $decodedResponse['error']['message']);
-            header("Location: ../insert-report.html?message=$message");
+            header("Location: ../insert-report.php?message=$message");
             exit();
         } else {
             // Redirect with a success message
             $message = urlencode("Report submitted successfully.");
-            header("Location: ../insert-report.html?message=$message");
+            header("Location: ../insert-report.php?message=$message");
             exit();
         }
     } catch (Exception $e) {
         // Redirect with an exception error message
         $message = urlencode("An error occurred: " . $e->getMessage());
-        header("Location: ../insert-report.html?message=$message");
+        header("Location: ../insert-report.php?message=$message");
         exit();
     }
 }
