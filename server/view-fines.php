@@ -1,6 +1,7 @@
 <?php
+header('Content-Type: application/json'); // Set the header for JSON response
 ini_set('memory_limit', '1G'); // Increase memory limit
-require 'config.php'; // Include the file that fetches the data
+require 'config.php'; // Include the configuration
 
 function fetchfines($limit, $offset) {
     global $supabaseUrl;
@@ -33,4 +34,6 @@ while (true) {
     $records = array_merge($records, $batch);
     $offset += $batchSize;
 }
+
+echo json_encode($records); // Output the JSON data
 ?>

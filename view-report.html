@@ -1,19 +1,8 @@
-<?php require './server/view-expenses.php'; ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <style>
-    #comments{
-    width: 900px;
-   
-    max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  cursor: pointer;
-}
-    </style>
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
@@ -37,8 +26,6 @@
   <link href="assets/css/icons.css" rel="stylesheet" type="text/css"/>
   <!-- Sidebar CSS-->
   <link href="assets/css/sidebar-menu.css" rel="stylesheet"/>
-  <script src="comment.js" type="text/javascript"></script>
-
   <!-- Custom Style-->
   <link href="assets/css/app-style.css" rel="stylesheet"/>
   <script> function loadSidebar() { fetch('sidebar.html') .then(response => response.text()) .then(data => { document.getElementById('sidebar-wrapper').innerHTML = data; }); } window.onload = loadSidebar; </script>
@@ -194,7 +181,7 @@
              </div>
 		 </div>
 	       <div class="table-responsive">
-                 <table class="table align-items-center table-flush table-borderless">
+                 <table id="reportsTable" class="table align-items-center table-flush table-borderless">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -206,33 +193,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if (isset($records['error'])): ?>
+
                                 <tr>
-                                    <td colspan="6">Error: <?php echo htmlspecialchars($records['error']); ?></td>
+                                    <td colspan="6">Loading data...</td>
                                 </tr>
-                            <?php elseif (!empty($records)): ?>
-                                <?php foreach ($records as $record): ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($record['date']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['supervisor_names']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['plate_number']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['amount']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['status']); ?></td>
-                                        <td id="comments" onclick="showPopup(this)"><?php echo htmlspecialchars($record['comment']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['location']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['garage_fees']); ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="6">No records found.</td>
-                                </tr>
-                            <?php endif; ?>
+                            
                         </tbody>
                     </table>               </div>
 	   </div>
-
-        
 	 </div>
 	</div><!--End Row-->
 
@@ -244,5 +212,61 @@
 		
     </div>
     </div></div>
+    <script>
+      async function fetchReports() {
+          try {
+              const response = await fetch('server/view-reports.php'); // Adjust the path if necessary
+              if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+              const data = await response.json();
+              renderTable(data);
+          } catch (error) {
+              displayError(error.message);
+          }
+      }
+
+      function renderTable(records) {
+          const tableBody = document.querySelector('#reportsTable tbody');
+          tableBody.innerHTML = ''; // Clear the table body
+
+          if (records.error) {
+              tableBody.innerHTML = `<tr><td colspan="6" class="error">Error: ${records.error}</td></tr>`;
+              return;
+          }
+
+          if (records.length === 0) {
+              tableBody.innerHTML = `<tr><td colspan="6">No records found.</td></tr>`;
+              return;
+          }
+
+          records.forEach(record => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                  <td>${sanitize(record.driver_names)}</td>
+                  <td>${sanitize(record.plate_number)}</td>
+                  <td>${sanitize(record.amount)}</td>
+                  <td>${sanitize(record.payment_date)}</td>
+                  <td>${sanitize(record.comment)}</td>
+                  <td>${sanitize(record.created_at)}</td>
+              `;
+              tableBody.appendChild(row);
+          });
+      }
+
+      function displayError(message) {
+          const tableBody = document.querySelector('#reportsTable tbody');
+          tableBody.innerHTML = `<tr><td colspan="6" class="error">Error: ${message}</td></tr>`;
+      }
+
+      function sanitize(input) {
+          const tempDiv = document.createElement('div');
+          tempDiv.textContent = input;
+          return tempDiv.innerHTML;
+      }
+
+      // Fetch and display the reports on page load
+      fetchReports();
+  </script>
 </body>
 </html>

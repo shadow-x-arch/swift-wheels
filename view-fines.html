@@ -1,4 +1,4 @@
-<?php require './server/view-fines.php'; ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -181,42 +181,24 @@
              </div>
 		 </div>
 	       <div class="table-responsive">
-                 <table class="table align-items-center table-flush table-borderless">
+                 <table id="finesTable" class="table align-items-center table-flush table-borderless">
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                
                                 <th>Plate Number</th>
                                 <th> fines numbe</th>
                                 <th>in-charg-of</th>
                                 <th>Status</th>
                                 <th>Amount</th>
-                                
                                 <th>Comment</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if (isset($records['error'])): ?>
+                          
                                 <tr>
-                                    <td colspan="6">Error: <?php echo htmlspecialchars($records['error']); ?></td>
+                                    <td colspan="6">searching ...</search></td>
                                 </tr>
-                            <?php elseif (!empty($records)): ?>
-                                <?php foreach ($records as $record): ?> 
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($record['date']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['plate_number']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['fines_number']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['payed_by']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['status']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['amount']); ?></td>
-                                        <td><?php echo htmlspecialchars($record['comment']); ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="6">No records found.</td>
-                                </tr>
-                            <?php endif; ?>
+                            
                         </tbody>
                     </table>               </div>
 	   </div>
@@ -231,5 +213,64 @@
 		
     </div>
     </div></div>
+    <script>
+      async function fetchFines() {
+          try {
+              const response = await fetch('server/view-fines.php'); // Adjust the path if necessary
+              if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+              const data = await response.json();
+              renderTable(data);
+          } catch (error) {
+              displayError(error.message);
+          }
+      }
+
+      function renderTable(records) {
+          const tableBody = document.querySelector('#finesTable tbody');
+          tableBody.innerHTML = ''; // Clear the table body
+
+          if (records.error) {
+              tableBody.innerHTML = `<tr><td colspan="6" class="error">Error: ${records.error}</td></tr>`;
+              return;
+          }
+
+          if (records.length === 0) {
+              tableBody.innerHTML = `<tr><td colspan="6">No records found.</td></tr>`;
+              return;
+          }
+
+          records.forEach(record => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+<td>${sanitize(record.date)}</td>
+<td>${sanitize(record.plate_number)}</td>
+<td>${sanitize(record.fines_number)}</td>
+<td>${sanitize(record.payed_by)}</td>
+<td>${sanitize(record.status)}</td>
+<td>${sanitize(record.amount)}</td>
+<td>${sanitize(record.comment)}</td>
+
+
+              `;
+              tableBody.appendChild(row);
+          });
+      }
+
+      function displayError(message) {
+          const tableBody = document.querySelector('#finesTable tbody');
+          tableBody.innerHTML = `<tr><td colspan="6" class="error">Error: ${message}</td></tr>`;
+      }
+
+      function sanitize(input) {
+          const tempDiv = document.createElement('div');
+          tempDiv.textContent = input;
+          return tempDiv.innerHTML;
+      }
+
+      // Fetch and display the fines on page load
+      fetchFines();
+  </script>
 </body>
 </html>

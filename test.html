@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reports Viewer</h1>
+    <table id="reportsTable">
+        <thead>
+            <tr>
+                <th>Driver Names</th>
+                <th>Plate Number</th>
+                <th>Amount</th>
+                <th>Payment Date</th>
+                <th>Comment</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="6">Loading data...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchReports() {
+            try {
+                const response = await fetch('server/view-reports.php'); // Adjust the path if necessary
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                renderTable(data);
+            } catch (error) {
+                displayError(error.message);
+            }
+        }
+
+        function renderTable(records) {
+            const tableBody = document.querySelector('#reportsTable tbody');
+            tableBody.innerHTML = ''; // Clear the table body
+
+            if (records.error) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="error">Error: ${records.error}</td></tr>`;
+                return;
+            }
+
+            if (records.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6">No records found.</td></tr>`;
+                return;
+            }
+
+            records.forEach(record => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${sanitize(record.driver_names)}</td>
+                    <td>${sanitize(record.plate_number)}</td>
+                    <td>${sanitize(record.amount)}</td>
+                    <td>${sanitize(record.payment_date)}</td>
+                    <td>${sanitize(record.comment)}</td>
+                    <td>${sanitize(record.created_at)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function displayError(message) {
+            const tableBody = document.querySelector('#reportsTable tbody');
+            tableBody.innerHTML = `<tr><td colspan="6" class="error">Error: ${message}</td></tr>`;
+        }
+
+        function sanitize(input) {
+            const tempDiv = document.createElement('div');
+            tempDiv.textContent = input;
+            return tempDiv.innerHTML;
+        }
+
+        // Fetch and display the reports on page load
+        fetchReports();
+    </script>
+</body>
+</html>
